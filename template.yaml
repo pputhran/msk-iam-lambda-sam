@@ -62,12 +62,14 @@ Resources:
       Properties:
         TemplateURL: "./lambda.yaml"
         Parameters:
-          MSKCluster: !GetAtt MSKCluster.Outputs.MSKCluster
           PrivateSubnetMSKOne: !GetAtt MSKVPCStack.Outputs.PrivateSubnetMSKOne
           PrivateSubnetMSKTwo: !GetAtt MSKVPCStack.Outputs.PrivateSubnetMSKTwo
           VPCId: !GetAtt MSKVPCStack.Outputs.VPCId
           SecurityGroup: !GetAtt MSKVPCStack.Outputs.DefaultSecurityGroup
           MSKTopic: !Ref MSKTopic
+          MSKCluster: !GetAtt MSKCluster.Outputs.MSKCluster
+          ClusterName: !GetAtt MSKCluster.Outputs.ClusterName
+          ClusterId: !GetAtt MSKCluster.Outputs.ClusterId
 
 
 

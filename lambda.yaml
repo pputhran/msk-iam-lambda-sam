@@ -2,8 +2,6 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Parameters:
-  MSKCluster:
-    Type: String
   VPCId:
     Type: String
     Description: 'The VPC ID'
@@ -17,6 +15,12 @@ Parameters:
     Type: String
     Description: 'Security Group'
   MSKTopic:
+    Type: String
+  MSKCluster:
+    Type: String
+  ClusterName:
+    Type: String
+  ClusterId:
     Type: String
 
 Globals:
@@ -52,7 +56,21 @@ Resources:
             Topics:
               - !Ref MSKTopic
       Policies:
-      - AWSLambdaMSKExecutionRole
+        - AWSLambdaMSKExecutionRole
+        - Statement:
+          - Sid: MSKIAMRole
+            Effect: Allow
+            Action:
+              - kafka-cluster:Connect
+              - kafka-cluster:DescribeGroup
+              - kafka-cluster:AlterGroup
+              - kafka-cluster:DescribeTopic
+              - kafka-cluster:ReadData
+              - kafka-cluster:DescribeClusterDynamicConfiguration
+            Resource:
+              - !Ref MSKCluster
+              - !Sub 'arn:aws:kafka:${AWS::Region}:${AWS::AccountId}:group/${ClusterName}/${ClusterId}/*'
+              - !Sub 'arn:aws:kafka:${AWS::Region}:${AWS::AccountId}:topic/${ClusterName}/${ClusterId}/${MSKTopic}'
       VpcConfig:
         SubnetIds:
           - !Ref PrivateSubnetMSKOne

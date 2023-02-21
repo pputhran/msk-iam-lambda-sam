@@ -159,25 +159,26 @@ Resources:
             VolumeSize: 500
       ClusterName: !Sub "${AWS::StackName}-cluster"
       ClientAuthentication:
-          Unauthenticated: 
-            Enabled: True
+          Sasl:
+            Iam:
+              Enabled: True
       KafkaVersion: !Ref MSKKafkaVersion
       NumberOfBrokerNodes: 2
       EncryptionInfo: 
         EncryptionInTransit: 
-          ClientBroker: TLS_PLAINTEXT
+          InCluster: true
 
-  # Cloud9EC2Bastion:
-  #   Type: AWS::Cloud9::EnvironmentEC2
-  #   Properties: 
-  #     AutomaticStopTimeMinutes: 600
-  #     Description: "Cloud9 EC2 environment"
-  #     InstanceType: m5.large
-  #     Name: !Sub "${AWS::StackName}-Cloud9EC2Bastion"
-  #     SubnetId: !Ref PublicSubnetOne
-  #     Tags: 
-  #       - Key: 'Purpose'
-  #         Value: 'Cloud9EC2BastionHostInstance'
+  Cloud9EC2Bastion:
+    Type: AWS::Cloud9::EnvironmentEC2
+    Properties: 
+      AutomaticStopTimeMinutes: 600
+      Description: "Cloud9 EC2 environment"
+      InstanceType: m5.large
+      Name: !Sub "${AWS::StackName}-Cloud9EC2Bastion"
+      SubnetId: !Ref PublicSubnetOne
+      Tags: 
+        - Key: 'Purpose'
+          Value: 'Cloud9EC2BastionHostInstance'
 
   LambdaVPCEndpoint:
     Type: 'AWS::EC2::VPCEndpoint'
@@ -209,3 +210,10 @@ Outputs:
   MSKCluster: 
     Description: MSK Cluster details
     Value: !Ref MSKCluster
+  ClusterName:
+    Description: MSK Cluster Name
+    Value: !Select [ 1, !Split ["/", !Ref MSKCluster]]
+  ClusterId:
+    Description: MSK Cluster Id
+    Value: !Select [ 2, !Split ["/", !Ref MSKCluster]]
+
